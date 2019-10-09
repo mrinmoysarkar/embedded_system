@@ -1,3 +1,9 @@
+/*
+ * Author: Mrinmoy sarkar
+ * email: msarkar@aggies.ncat.edu
+ * Date: 10/8/2019
+ */
+
 
 #include <ti/devices/msp432p4xx/inc/msp.h>
 #include <ti/devices/msp432p4xx/driverlib/driverlib.h>
@@ -24,24 +30,29 @@ int imageOrpallet = -1;//0 means image 1 means pallet
 uint32_t palletData = 0;
 Graphics_Image bitmap;
 int delay = 0;
+int buttonstate = 0;
 const eUSCI_UART_Config uartConfig =
 {
-        EUSCI_A_UART_CLOCKSOURCE_SMCLK,          // SMCLK Clock Source
-        6,                                     // BRDIV = 78
-        8,                                       // UCxBRF = 2
-        32,                                       // UCxBRS = 0
-        EUSCI_A_UART_NO_PARITY,                  // No Parity
-        EUSCI_A_UART_LSB_FIRST,                  // LSB First
-        EUSCI_A_UART_ONE_STOP_BIT,               // One stop bit
-        EUSCI_A_UART_MODE,                       // UART mode
-        EUSCI_A_UART_OVERSAMPLING_BAUDRATE_GENERATION  // Oversampling
+    EUSCI_A_UART_CLOCKSOURCE_SMCLK,          // SMCLK Clock Source
+    6,                                     // BRDIV = 78
+    8,                                       // UCxBRF = 2
+    32,                                       // UCxBRS = 0
+    EUSCI_A_UART_NO_PARITY,                  // No Parity
+    EUSCI_A_UART_LSB_FIRST,                  // LSB First
+    EUSCI_A_UART_ONE_STOP_BIT,               // One stop bit
+    EUSCI_A_UART_MODE,                       // UART mode
+    EUSCI_A_UART_OVERSAMPLING_BAUDRATE_GENERATION  // Oversampling
 };
 
 void num2str(uint16_t x, char* str);
 
-/*
- * Main function
- */
+enum AR_States { AR_SMStart, AR_IDEAL, AR_PRESS_LR, AR_PRESS_UD} ar_state;
+enum AR_States TickFct_Arrow(enum AR_States state);
+
+enum BTN_States { BTN_SMStart, BTN_IDEAL, BTN_PRESS_SPACE, BTN_PRESS_X, BTN_PRESS_Z} btn_state;
+enum BTN_States TickFct_Button(enum BTN_States state);
+
+
 int done = 0;
 int main(void)
 {
@@ -55,6 +66,9 @@ int main(void)
     bitmap.pPixel = image;
     bitmap.xSize = 128;
     bitmap.ySize = 128;
+
+    ar_state = AR_SMStart;
+    btn_state = BTN_SMStart;
 
     /* Set the core voltage level to VCORE1 */
     MAP_PCM_setCoreVoltageLevel(PCM_VCORE1);
@@ -70,10 +84,12 @@ int main(void)
     MAP_CS_initClockSignal(CS_SMCLK, CS_DCOCLK_SELECT, CS_CLOCK_DIVIDER_1);
     MAP_CS_initClockSignal(CS_ACLK, CS_REFOCLK_SELECT, CS_CLOCK_DIVIDER_1);
 
-    GPIO_setAsInputPinWithPullUpResistor(GPIO_PORT_P3, GPIO_PIN5);/////////////////
+    GPIO_setAsInputPinWithPullUpResistor(GPIO_PORT_P3, GPIO_PIN5);
+    GPIO_setAsInputPinWithPullUpResistor(GPIO_PORT_P5, GPIO_PIN1);
+    GPIO_setAsInputPinWithPullUpResistor(GPIO_PORT_P4, GPIO_PIN1);
 
     /* Selecting P1.2 and P1.3 in UART mode */
-      MAP_GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P1,
+    MAP_GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P1,
               GPIO_PIN2 | GPIO_PIN3, GPIO_PRIMARY_MODULE_FUNCTION);
 
       /* Setting DCO to 12MHz */
@@ -262,66 +278,165 @@ void ADC14_IRQHandler(void)
     }
 
     if(status & ADC_INT1)
-       {
-           /* Store ADC14 conversion results */
+    {
         resultsBuffer_JOY[0] = ADC14_getResult(ADC_MEM3);
         resultsBuffer_JOY[1] = ADC14_getResult(ADC_MEM4);
+        ar_state = TickFct_Arrow(ar_state);
+        btn_state = TickFct_Button(btn_state);
+    }
+}
 
 
-        if(GPIO_getInputPinValue(GPIO_PORT_P3, GPIO_PIN5) == GPIO_INPUT_PIN_LOW)
-        {
-            printf("sw pressed\n");
-            char *str = "ZOOM\n";
+enum BTN_States TickFct_Button(enum BTN_States state)
+{
+    switch(state)
+    {
+        case BTN_SMStart:
+            state = BTN_IDEAL;
+            break;
+        case BTN_IDEAL:
+            if(GPIO_getInputPinValue(GPIO_PORT_P3, GPIO_PIN5) == GPIO_INPUT_PIN_LOW)
+            {
+                char *str = "Z\n";
+                while(*str != 0)
+                {
+                    MAP_UART_transmitData(EUSCI_A0_BASE, *str++);
+                }
+                state = BTN_PRESS_Z;
+            }
+            else if(GPIO_getInputPinValue(GPIO_PORT_P5, GPIO_PIN1) == GPIO_INPUT_PIN_LOW)
+            {
+                char *str = "SPACE_BAR\n";
+                while(*str != 0)
+                {
+                    MAP_UART_transmitData(EUSCI_A0_BASE, *str++);
+                }
+                state = BTN_PRESS_SPACE;
+            }
+            else if(GPIO_getInputPinValue(GPIO_PORT_P4, GPIO_PIN1) == GPIO_INPUT_PIN_LOW)
+            {
+                char *str = "X\n";
+                while(*str != 0)
+                {
+                    MAP_UART_transmitData(EUSCI_A0_BASE, *str++);
+                }
+                state = BTN_PRESS_X;
+            }
+            break;
+        case BTN_PRESS_Z:
+            if(GPIO_getInputPinValue(GPIO_PORT_P3, GPIO_PIN5) != GPIO_INPUT_PIN_LOW)
+            {
+                char *str = "Z_UP\n";
+                while(*str != 0)
+                {
+                    MAP_UART_transmitData(EUSCI_A0_BASE, *str++);
+                }
+                state = BTN_IDEAL;
+            }
+            break;
+        case BTN_PRESS_SPACE:
+            if(GPIO_getInputPinValue(GPIO_PORT_P5, GPIO_PIN1) != GPIO_INPUT_PIN_LOW)
+            {
+                char *str = "SPACE_BAR_UP\n";
+                while(*str != 0)
+                {
+                    MAP_UART_transmitData(EUSCI_A0_BASE, *str++);
+                }
+                state = BTN_IDEAL;
+            }
+            break;
+        case BTN_PRESS_X:
+            if(GPIO_getInputPinValue(GPIO_PORT_P4, GPIO_PIN1) != GPIO_INPUT_PIN_LOW)
+            {
+                char *str = "X_UP\n";
+                while(*str != 0)
+                {
+                    MAP_UART_transmitData(EUSCI_A0_BASE, *str++);
+                }
+                state = BTN_IDEAL;
+            }
+            break;
+        default:
+            state = BTN_SMStart;
+            break;
+    }
+    return state;
+}
+
+enum AR_States TickFct_Arrow(enum AR_States state) {
+  switch(state)
+  {
+     case AR_SMStart:
+        state = AR_IDEAL;
+        break;
+     case AR_IDEAL:
+         if(resultsBuffer_JOY[0] > 15000)
+         {
+            char *str = "RIGHT_ARROW\n";
             while(*str != 0)
             {
                 MAP_UART_transmitData(EUSCI_A0_BASE, *str++);
             }
-            while(GPIO_getInputPinValue(GPIO_PORT_P3, GPIO_PIN5) == GPIO_INPUT_PIN_LOW);
-        }
-
-           /* Determine if JoyStick button is pressed */
-           int buttonPressed = 0;
-           if (!(P4IN & GPIO_PIN1))
+            state = AR_PRESS_LR;
+         }
+         else if(resultsBuffer_JOY[0] < 50)
+         {
+           char *str = "LEFT_ARROW\n";
+           while(*str != 0)
            {
-               buttonPressed = 1;
+               MAP_UART_transmitData(EUSCI_A0_BASE, *str++);
            }
-           if(buttonPressed)
+           state = AR_PRESS_LR;
+         }
+         else if(resultsBuffer_JOY[1] > 15000)
+         {
+           char *str = "UP_ARROW\n";
+           while(*str != 0)
            {
-               char *str = "JOY_BUTTON_CLICK\n";
-               while(*str != 0)
-               {
-//                   printf("%c",*str);
-                   MAP_UART_transmitData(EUSCI_A0_BASE, *str++);
-
-               }
-//               printf("sending data\n");
-               while (!(P4IN & GPIO_PIN1));
+               MAP_UART_transmitData(EUSCI_A0_BASE, *str++);
            }
-           if (((int)resultsBuffer_JOY[0]-7251) > 500 || ((int)resultsBuffer_JOY[0]-7251) < -500 || ((int)resultsBuffer_JOY[1]-8295) > 500 ||((int)resultsBuffer_JOY[1]-8295) < -500)
+           state = AR_PRESS_UD;
+         }
+         else if(resultsBuffer_JOY[1] < 50)
+         {
+           char *str = "DOWN_ARROW\n";
+           while(*str != 0)
            {
-               char strx[] = "XXXXXXXXXXXXXXXX\n";
-
-               num2str(resultsBuffer_JOY[0], strx);
-               int i,j;
-               for(i=0;i<17;i++)
-               {
-                  MAP_UART_transmitData(EUSCI_A0_BASE, strx[i]);
-               }
-               char stry[] = "YYYYYYYYYYYYYYYY\n";
-
-               num2str(resultsBuffer_JOY[1], stry);
-               for( i = 0;i<17;i++)
-               {
-                   MAP_UART_transmitData(EUSCI_A0_BASE, stry[i]);
-               }
-
-               for(i=0;i<100;i++)
-               {
-                   for(j=0;j<1000;j++);
-               }
+               MAP_UART_transmitData(EUSCI_A0_BASE, *str++);
            }
-       }
+           state = AR_PRESS_UD;
+         }
+        break;
+     case AR_PRESS_LR:
+         if(resultsBuffer_JOY[0]>6500 && resultsBuffer_JOY[0] <8000)
+         {
+             char *str = "LR_ARROW_UP\n";
+             while(*str != 0)
+             {
+               MAP_UART_transmitData(EUSCI_A0_BASE, *str++);
+             }
+             state = AR_IDEAL;
+         }
+         break;
+     case AR_PRESS_UD:
+         if(resultsBuffer_JOY[1]>7500 && resultsBuffer_JOY[1] <9000)
+         {
+             char *str = "UD_ARROW_UP\n";
+             while(*str != 0)
+             {
+               MAP_UART_transmitData(EUSCI_A0_BASE, *str++);
+             }
+             state = AR_IDEAL;
+         }
+        break;
+     default:
+        state = AR_SMStart;
+        break;
+   }
+  return state;
 }
+
+
 
 void num2str(uint16_t x, char *str)
 {
