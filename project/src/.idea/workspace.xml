@@ -7,7 +7,6 @@
       <change beforePath="$PROJECT_DIR$/../firmware/Debug/firmware_linkInfo.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../firmware/Debug/firmware_linkInfo.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../firmware/Debug/main.obj" beforeDir="false" afterPath="$PROJECT_DIR$/../firmware/Debug/main.obj" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../firmware/main.c" beforeDir="false" afterPath="$PROJECT_DIR$/../firmware/main.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../game_link.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../game_link.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/parseData.py" beforeDir="false" afterPath="$PROJECT_DIR$/parseData.py" afterDir="false" />
     </list>
