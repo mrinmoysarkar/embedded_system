@@ -2,7 +2,7 @@
 # Automatically-generated file. Do not edit!
 ################################################################################
 
-CG_TOOL_ROOT := /home/ariac/ti/ccs910/ccs/tools/compiler/ti-cgt-arm_18.12.3.LTS
+CG_TOOL_ROOT := /Applications/ti/ccs920/ccs/tools/compiler/ti-cgt-arm_18.12.3.LTS
 
 GEN_OPTS__FLAG := 
 GEN_CMDS__FLAG := 
@@ -15,7 +15,7 @@ ORDERED_OBJS += \
 "./ccs/startup_msp432p401r_ccs.obj" \
 "../msp432p401r.cmd" \
 $(GEN_CMDS__FLAG) \
--l"/home/ariac/ti/simplelink_msp432p4_sdk_3_20_00_06/source/ti/grlib/lib/ccs/m4f/grlib.a" \
+-l"/Users/mrinmoysarkar/ti/simplelink_msp432p4_sdk_3_30_00_13/source/ti/grlib/lib/ccs/m4f/grlib.a" \
 -l"ti/display/lib/display.aem4f" \
 -l"ti/grlib/lib/ccs/m4f/grlib.a" \
 -l"third_party/spiffs/lib/ccs/m4f/spiffs.a" \
@@ -153,14 +153,14 @@ all: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 firmware.out: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 	@echo 'Building target: "$@"'
 	@echo 'Invoking: ARM Linker'
-	"/home/ariac/ti/ccs910/ccs/tools/compiler/ti-cgt-arm_18.12.3.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me --advice:power=none --define=__MSP432P401R__ --define=DeviceFamily_MSP432P401x -g --diag_warning=225 --diag_warning=255 --diag_wrap=off --display_error_number --gen_func_subsections=on -z -m"firmware.map" --stack_size=512 -i"/home/ariac/ti/simplelink_msp432p4_sdk_3_20_00_06/source" -i"/home/ariac/ti/ccs910/ccs/tools/compiler/ti-cgt-arm_18.12.3.LTS/lib" --diag_wrap=off --display_error_number --warn_sections --xml_link_info="firmware_linkInfo.xml" --rom_model -o "firmware.out" $(ORDERED_OBJS)
+	"/Applications/ti/ccs920/ccs/tools/compiler/ti-cgt-arm_18.12.3.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me --advice:power=none --define=__MSP432P401R__ --define=DeviceFamily_MSP432P401x -g --diag_warning=225 --diag_warning=255 --diag_wrap=off --display_error_number --gen_func_subsections=on -z -m"firmware.map" --stack_size=512 -i"/Users/mrinmoysarkar/ti/simplelink_msp432p4_sdk_3_30_00_13/source" -i"/Applications/ti/ccs920/ccs/tools/compiler/ti-cgt-arm_18.12.3.LTS/lib" --diag_wrap=off --display_error_number --warn_sections --xml_link_info="firmware_linkInfo.xml" --rom_model -o "firmware.out" $(ORDERED_OBJS)
 	@echo 'Finished building target: "$@"'
 	@echo ' '
 
 firmware.hex: $(EXE_OUTPUTS)
 	@echo 'Building files: $(strip $(EXE_OUTPUTS__QUOTED))'
 	@echo 'Invoking: ARM Hex Utility'
-	"/home/ariac/ti/ccs910/ccs/tools/compiler/ti-cgt-arm_18.12.3.LTS/bin/armhex"  -o "firmware.hex" $(EXE_OUTPUTS__QUOTED)
+	"/Applications/ti/ccs920/ccs/tools/compiler/ti-cgt-arm_18.12.3.LTS/bin/armhex"  -o "firmware.hex" $(EXE_OUTPUTS__QUOTED)
 	@echo 'Finished building: $(strip $(EXE_OUTPUTS__QUOTED))'
 	@echo ' '
 
