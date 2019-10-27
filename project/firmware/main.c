@@ -12,6 +12,7 @@
 #include <stdio.h>
 
 #define TOTAL_LCD_BYTES 1024
+#define PALLET_CHUNK    17
 
 #pragma DATA_ALIGN(controlTable, TOTAL_LCD_BYTES*2)
 
@@ -39,13 +40,13 @@ bool sendsync = false;
 Graphics_Image bitmap;
 
 
-// baudrate 230400 bps
+// baudrate 460800 bps
 const eUSCI_UART_ConfigV1 uartConfig =
 {
     EUSCI_A_UART_CLOCKSOURCE_SMCLK,          // SMCLK Clock Source
-    3,                                     // BRDIV = 78
-    4,                                       // UCxBRF = 2
-    2,                                       // UCxBRS = 0
+    1,                                     // BRDIV = 78
+    10,                                       // UCxBRF = 2
+    0,                                       // UCxBRS = 0
     EUSCI_A_UART_NO_PARITY,                  // No Parity
     EUSCI_A_UART_LSB_FIRST,                  // LSB First
     EUSCI_A_UART_ONE_STOP_BIT,               // One stop bit
@@ -99,7 +100,6 @@ int main(void)
 
 void init_CLOCK(void)
 {
-
     MAP_PCM_setCoreVoltageLevel(PCM_VCORE1);
 
     MAP_FlashCtl_setWaitState(FLASH_BANK0, 2);
@@ -147,13 +147,9 @@ void init_SM(void)
 
 void init_UART(void)
 {
-
     MAP_GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P1, GPIO_PIN2 | GPIO_PIN3, GPIO_PRIMARY_MODULE_FUNCTION);
-
     MAP_UART_initModule(EUSCI_A0_BASE, &uartConfig);
-
     MAP_UART_enableModule(EUSCI_A0_BASE);
-
 }
 
 
@@ -256,9 +252,9 @@ void process_ReceivedData(bool ping_or_pong)
 {
     int i;
     count++;
-    if(count==17)
+    if(count==PALLET_CHUNK)
     {
-        for(i=0;i<TOTAL_LCD_BYTES;)
+        for(i=0;i<TOTAL_LCD_BYTES && palletindex<256;)
         {
             if(ping_or_pong)
             {

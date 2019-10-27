@@ -30,7 +30,8 @@ def serialSendThread():
     y0 = 450
     w = 530
     h = 390
-    newPallet = [0]*1024
+    datachunksize = 1024
+    newPallet = [0]*datachunksize
     if ser.is_open:
         with mss() as sct:
             monitor_number = 0
@@ -46,9 +47,9 @@ def serialSendThread():
             # for i in range(1):
                 if sendimageflag:
                     sct_img = sct.grab(monitor)
-                    mousex, mousey = pyautogui.position()
+                    # mousex, mousey = pyautogui.position()
                     # print(mousex,mousey)
-                    mousex, mousey = mousex-460, mousey-410
+                    # mousex, mousey = mousex-460, mousey-410
                     imgpill = Image.frombytes("RGB", sct_img.size, sct_img.bgra, "raw", "BGRX")
                     # if ((mousex+20) <= 640) and ((mousey+20) <= 380 and mousex >=0 and mousey >= 0):
                     #     imgpill.paste(cursorImage, box=(mousex,mousey,mousex+20,mousey+20))
@@ -68,10 +69,10 @@ def serialSendThread():
                     image = imgcvt.tobytes()
                     pallet = bytearray(newPallet)
 
-                    for indx in range(0, len(image), 1024):
-                        sendBuffer = image[indx:indx+1024]
+                    for indx in range(0, len(image), datachunksize):
+                        sendBuffer = image[indx:indx+datachunksize]
                         ser.write(sendBuffer)
-                        time.sleep(0.5)
+                        time.sleep(0.2) #0.25 was best
                     # ser.write(b'STARTI')
                     # time.sleep(0.2)
                     # ser.write(image)
@@ -83,7 +84,7 @@ def serialSendThread():
                     # datareceive = ser.read_until()
                     # if datareceive:
                     #     decodeCode(datareceive)
-                    time.sleep(0.5)
+                    time.sleep(0.2) #0.25 was best
     print("finish send thread")
 
 def serialReceiveThread():
@@ -155,7 +156,7 @@ def testfcn():
 
 if __name__ == "__main__":
     # ser = serial.Serial('/dev/ttyACM0', 115200, timeout=1) #for linux
-    ser = serial.Serial('/dev/tty.usbmodemM43210051', 230400, timeout=1) #for mac
+    ser = serial.Serial('/dev/tty.usbmodemM43210051', 460800, timeout=1) #for mac
     breakSerial = False
     sendimageflag = False
     threading.Thread(target=serialSendThread).start()
