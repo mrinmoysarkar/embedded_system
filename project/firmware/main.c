@@ -12,7 +12,7 @@
 #include <stdio.h>
 
 #define TOTAL_LCD_BYTES 1024
-#define PALLET_CHUNK    17
+#define PALLET_CHUNK    7
 
 #pragma DATA_ALIGN(controlTable, TOTAL_LCD_BYTES*2)
 
@@ -44,8 +44,8 @@ Graphics_Image bitmap;
 const eUSCI_UART_ConfigV1 uartConfig =
 {
     EUSCI_A_UART_CLOCKSOURCE_SMCLK,          // SMCLK Clock Source
-    1,                                     // BRDIV = 78
-    10,                                       // UCxBRF = 2
+    1,                                     // BRDIV = 1
+    10,                                       // UCxBRF = 10
     0,                                       // UCxBRS = 0
     EUSCI_A_UART_NO_PARITY,                  // No Parity
     EUSCI_A_UART_LSB_FIRST,                  // LSB First
