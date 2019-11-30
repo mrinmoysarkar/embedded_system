@@ -1,7 +1,7 @@
 ******************************************************************************
                   TI ARM Linker Unix v18.12.3                  
 ******************************************************************************
->> Linked Tue Nov 26 11:25:15 2019
+>> Linked Sat Nov 30 11:50:08 2019
 
 OUTPUT FILE NAME:   <firmware.out>
 ENTRY POINT SYMBOL: "_c_int00_noargs"  address: 00004315
@@ -11,25 +11,25 @@ MEMORY CONFIGURATION
 
          name            origin    length      used     unused   attr    fill
 ----------------------  --------  ---------  --------  --------  ----  --------
-  MAIN                  00000000   00040000  00004e94  0003b16c  R  X
+  MAIN                  00000000   00040000  00004e8c  0003b174  R  X
   INFO                  00200000   00004000  00000000  00004000  R  X
-  SRAM_CODE             01000000   00010000  00006210  00009df0  RW X
-  SRAM_DATA             20000000   00010000  00006210  00009df0  RW  
+  SRAM_CODE             01000000   00010000  0000620c  00009df4  RW X
+  SRAM_DATA             20000000   00010000  0000620c  00009df4  RW  
 
 
 SEGMENT ALLOCATION MAP
 
 run origin  load origin   length   init length attrs members
 ----------  ----------- ---------- ----------- ----- -------
-00000000    00000000    00004e98   00004e98    r-x
+00000000    00000000    00004e90   00004e90    r-x
   00000000    00000000    000000e4   000000e4    r-- .intvecs
   000000e4    000000e4    00004730   00004730    r-x .text
   00004814    00004814    000005e0   000005e0    r-- .const
-  00004df8    00004df8    000000a0   000000a0    r-- .cinit
-20000000    20000000    00006014   00000000    rw-
+  00004df8    00004df8    00000098   00000098    r-- .cinit
+20000000    20000000    00006010   00000000    rw-
   20000000    20000000    00005604   00000000    rw- .bss
   20005608    20005608    00000800   00000000    rw- .sysmem
-  20005e08    20005e08    0000020c   00000000    rw- .data
+  20005e08    20005e08    00000208   00000000    rw- .data
 2000fe00    2000fe00    00000200   00000000    rw-
   2000fe00    2000fe00    00000200   00000000    rw- .stack
 
@@ -204,13 +204,12 @@ section   page    origin      length       input sections
                   00004dd0    0000001c     HAL_MSP_EXP432P401R_Crystalfontz128x128_ST7735.obj (.const:$P$T0$1)
                   00004dec    00000008     Crystalfontz128x128_ST7735.obj (.const:$P$T0$1)
 
-.cinit     0    00004df8    000000a0     
-                  00004df8    00000076     (.cinit..data.load) [load image, compression = lzss]
-                  00004e6e    00000002     --HOLE-- [fill = 0]
-                  00004e70    0000000c     (__TI_handler_table)
-                  00004e7c    00000004     --HOLE-- [fill = 0]
-                  00004e80    00000008     (.cinit..bss.load) [load image, compression = zero_init]
-                  00004e88    00000010     (__TI_cinit_table)
+.cinit     0    00004df8    00000098     
+                  00004df8    00000072     (.cinit..data.load) [load image, compression = lzss]
+                  00004e6a    00000002     --HOLE-- [fill = 0]
+                  00004e6c    0000000c     (__TI_handler_table)
+                  00004e78    00000008     (.cinit..bss.load) [load image, compression = zero_init]
+                  00004e80    00000010     (__TI_cinit_table)
 
 .init_array 
 *          0    00000000    00000000     UNINITIALIZED
@@ -244,17 +243,18 @@ section   page    origin      length       input sections
                   20005608    00000010     rtsv7M4_T_le_v4SPD16_eabi.lib : memory.c.obj (.sysmem)
                   20005618    000007f0     --HOLE--
 
-.data      0    20005e08    0000020c     UNINITIALIZED
+.data      0    20005e08    00000208     UNINITIALIZED
                   20005e08    000000f0     rtsv7M4_T_le_v4SPD16_eabi.lib : defs.c.obj (.data:_ftable)
                   20005ef8    00000078                                   : host_device.c.obj (.data:_device)
                   20005f70    00000050                                   : host_device.c.obj (.data:_stream)
-                  20005fc0    00000014     main.obj (.data)
-                  20005fd4    00000010     Crystalfontz128x128_ST7735.obj (.data:g_sCrystalfontz128x128)
-                  20005fe4    00000010     rtsv7M4_T_le_v4SPD16_eabi.lib : defs.c.obj (.data)
-                  20005ff4    0000000c                                   : exit.c.obj (.data:$O1$$)
-                  20006000    00000008                                   : _lock.c.obj (.data:$O1$$)
-                  20006008    00000008                                   : memory.c.obj (.data:$O1$$)
-                  20006010    00000004                                   : errno.c.obj (.data)
+                  20005fc0    00000010     Crystalfontz128x128_ST7735.obj (.data:g_sCrystalfontz128x128)
+                  20005fd0    00000010     rtsv7M4_T_le_v4SPD16_eabi.lib : defs.c.obj (.data)
+                  20005fe0    0000000d     main.obj (.data)
+                  20005fed    00000003     --HOLE--
+                  20005ff0    0000000c     rtsv7M4_T_le_v4SPD16_eabi.lib : exit.c.obj (.data:$O1$$)
+                  20005ffc    00000008                                   : _lock.c.obj (.data:$O1$$)
+                  20006004    00000008                                   : memory.c.obj (.data:$O1$$)
+                  2000600c    00000004                                   : errno.c.obj (.data)
 
 .stack     0    2000fe00    00000200     UNINITIALIZED
                   2000fe00    00000004     rtsv7M4_T_le_v4SPD16_eabi.lib : boot_cortex_m.c.obj (.stack)
@@ -265,10 +265,10 @@ MODULE SUMMARY
        Module                                               code    ro data   rw data
        ------                                               ----    -------   -------
     ./
-       main.obj                                             2142    40        41100  
+       main.obj                                             2142    40        41086  
        system_msp432p401r.obj                               120     0         0      
     +--+----------------------------------------------------+-------+---------+---------+
-       Total:                                               2262    40        41100  
+       Total:                                               2262    40        41086  
                                                                                      
     ./LcdDriver/
        Crystalfontz128x128_ST7735.obj                       1670    40        52     
@@ -363,21 +363,21 @@ MODULE SUMMARY
                                                                                      
        Heap:                                                0       0         4096   
        Stack:                                               0       0         1024   
-       Linker Generated:                                    0       154       0      
+       Linker Generated:                                    0       150       0      
     +--+----------------------------------------------------+-------+---------+---------+
-       Grand Total:                                         18199   1883      50208  
+       Grand Total:                                         18199   1879      50194  
 
 
 LINKER GENERATED COPY TABLES
 
-__TI_cinit_table @ 00004e88 records: 2, size/record: 8, table size: 16
-	.data: load addr=00004df8, load size=00000076 bytes, run addr=20005e08, run size=0000020c bytes, compression=lzss
-	.bss: load addr=00004e80, load size=00000008 bytes, run addr=20000000, run size=00005604 bytes, compression=zero_init
+__TI_cinit_table @ 00004e80 records: 2, size/record: 8, table size: 16
+	.data: load addr=00004df8, load size=00000072 bytes, run addr=20005e08, run size=00000208 bytes, compression=lzss
+	.bss: load addr=00004e78, load size=00000008 bytes, run addr=20000000, run size=00005604 bytes, compression=zero_init
 
 
 LINKER GENERATED HANDLER TABLE
 
-__TI_handler_table @ 00004e70 records: 3, size/record: 4, table size: 12
+__TI_handler_table @ 00004e6c records: 3, size/record: 4, table size: 12
 	index: 0, handler: __TI_decompress_lzss
 	index: 1, handler: __TI_decompress_none
 	index: 2, handler: __TI_zero_init
@@ -497,20 +497,20 @@ address   name
 20010000  __STACK_END                                
 00000200  __STACK_SIZE                               
 00000800  __SYSMEM_SIZE                              
-00004e88  __TI_CINIT_Base                            
-00004e98  __TI_CINIT_Limit                           
-00004e70  __TI_Handler_Table_Base                    
-00004e7c  __TI_Handler_Table_Limit                   
+00004e80  __TI_CINIT_Base                            
+00004e90  __TI_CINIT_Limit                           
+00004e6c  __TI_Handler_Table_Base                    
+00004e78  __TI_Handler_Table_Limit                   
 00004005  __TI_auto_init_nobinit_nopinit             
 000042ad  __TI_cleanup                               
-20005ff4  __TI_cleanup_ptr                           
+20005ff0  __TI_cleanup_ptr                           
 00003579  __TI_closefile                             
 0000379d  __TI_decompress_lzss                       
 000047c5  __TI_decompress_none                       
 00003dc1  __TI_doflush                               
-20005ff8  __TI_dtors_ptr                             
-20005ffc  __TI_enable_exit_profile_output            
-20005fe4  __TI_ft_end                                
+20005ff4  __TI_dtors_ptr                             
+20005ff8  __TI_enable_exit_profile_output            
+20005fd0  __TI_ft_end                                
 ffffffff  __TI_pprof_out_hndl                        
 000000e5  __TI_printfi                               
 ffffffff  __TI_prof_data_size                        
@@ -542,9 +542,9 @@ ffffffff  __TI_prof_data_start
 00003487  __aeabi_memset                             
 00003487  __aeabi_memset4                            
 00003487  __aeabi_memset8                            
-20005ff0  __aeabi_stderr                             
-20005fe8  __aeabi_stdin                              
-20005fec  __aeabi_stdout                             
+20005fdc  __aeabi_stderr                             
+20005fd4  __aeabi_stdin                              
+20005fd8  __aeabi_stdout                             
 00002fb5  __aeabi_uldivmod                           
 ffffffff  __binit__                                  
 ffffffff  __c_args__                                 
@@ -554,13 +554,13 @@ UNDEFED   __mpu_init
 00004b0c  _ctypes_                                   
 20005ef8  _device                                    
 20005e08  _ftable                                    
-20006000  _lock                                      
+20005ffc  _lock                                      
 00001693  _nop                                       
 20005f70  _stream                                    
 20005608  _sys_memory                                
 UNDEFED   _system_post_cinit                         
 0000480d  _system_pre_init                           
-20006004  _unlock                                    
+20006000  _unlock                                    
 00004811  abort                                      
 000025a5  aligned_alloc                              
 20005602  ar_state                                   
@@ -572,9 +572,8 @@ ffffffff  binit
 20005000  controlTable                               
 000046c1  copysign                                   
 000046c1  copysignl                                  
-20005fc0  count                                      
-20005fd0  done                                       
-20006010  errno                                      
+20005fe0  count                                      
+2000600c  errno                                      
 00003ea5  exit                                       
 000043a9  finddevice                                 
 000030d9  fputc                                      
@@ -584,12 +583,12 @@ ffffffff  binit
 0000386d  frexpl                                     
 000038d1  fseek                                      
 200055c0  g_sContext                                 
-20005fd4  g_sCrystalfontz128x128                     
+20005fc0  g_sCrystalfontz128x128                     
 00004db0  g_sCrystalfontz128x128_funcs               
 00004c10  g_sFontFixed6x8                            
 00004049  getdevice                                  
 20000000  image                                      
-20005fc8  imageindex                                 
+20005fe8  imageindex                                 
 00002dcd  init_ADC                                   
 000031ed  init_CLOCK                                 
 00002789  init_DMA                                   
@@ -610,7 +609,7 @@ ffffffff  binit
 00002f19  memcpy                                     
 0000348d  memset                                     
 20004c00  pallet                                     
-20005fc4  palletindex                                
+20005fe4  palletindex                                
 200055ec  parmbuf                                    
 00003805  printf                                     
 000017f5  process_ReceivedData                       
@@ -619,7 +618,7 @@ ffffffff  binit
 00002299  scalbn                                     
 00002299  scalbnl                                    
 0000448d  send_Command                               
-20005fcc  sendsync                                   
+20005fec  sendsync                                   
 0000295d  setvbuf                                    
 00004765  strchr                                     
 000046f5  strcmp                                     
@@ -825,10 +824,10 @@ address   name
 00004c10  g_sFontFixed6x8                            
 00004d88  uartConfig                                 
 00004db0  g_sCrystalfontz128x128_funcs               
-00004e70  __TI_Handler_Table_Base                    
-00004e7c  __TI_Handler_Table_Limit                   
-00004e88  __TI_CINIT_Base                            
-00004e98  __TI_CINIT_Limit                           
+00004e6c  __TI_Handler_Table_Base                    
+00004e78  __TI_Handler_Table_Limit                   
+00004e80  __TI_CINIT_Base                            
+00004e90  __TI_CINIT_Limit                           
 20000000  image                                      
 20004400  RXData_ping                                
 20004800  RXData_pong                                
@@ -852,22 +851,21 @@ address   name
 20005e08  _ftable                                    
 20005ef8  _device                                    
 20005f70  _stream                                    
-20005fc0  count                                      
-20005fc4  palletindex                                
-20005fc8  imageindex                                 
-20005fcc  sendsync                                   
-20005fd0  done                                       
-20005fd4  g_sCrystalfontz128x128                     
-20005fe4  __TI_ft_end                                
-20005fe8  __aeabi_stdin                              
-20005fec  __aeabi_stdout                             
-20005ff0  __aeabi_stderr                             
-20005ff4  __TI_cleanup_ptr                           
-20005ff8  __TI_dtors_ptr                             
-20005ffc  __TI_enable_exit_profile_output            
-20006000  _lock                                      
-20006004  _unlock                                    
-20006010  errno                                      
+20005fc0  g_sCrystalfontz128x128                     
+20005fd0  __TI_ft_end                                
+20005fd4  __aeabi_stdin                              
+20005fd8  __aeabi_stdout                             
+20005fdc  __aeabi_stderr                             
+20005fe0  count                                      
+20005fe4  palletindex                                
+20005fe8  imageindex                                 
+20005fec  sendsync                                   
+20005ff0  __TI_cleanup_ptr                           
+20005ff4  __TI_dtors_ptr                             
+20005ff8  __TI_enable_exit_profile_output            
+20005ffc  _lock                                      
+20006000  _unlock                                    
+2000600c  errno                                      
 2000fe00  __stack                                    
 20010000  __STACK_END                                
 4000480c  WDTCTL_SYM                                 
@@ -880,4 +878,4 @@ ffffffff  binit
 UNDEFED   __mpu_init                                 
 UNDEFED   _system_post_cinit                         
 
-[243 symbols]
+[242 symbols]
