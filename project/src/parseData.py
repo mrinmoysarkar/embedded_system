@@ -130,4 +130,4 @@ if __name__ == "__main__":
             break
     ser.close()   # close serial communication
 
-
+########################### END Driver Software ###########################
