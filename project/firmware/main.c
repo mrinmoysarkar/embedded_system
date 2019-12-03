@@ -38,7 +38,7 @@ uint32_t pallet[256]; // to hold pallet data
 // some variable to manage the received data correctly
 int count = 0;
 int palletindex = 0;
-int imageindex = 0;
+int imageindex = 5120;
 bool sendsync = false;
 
 Graphics_Image bitmap; //bitmap image variable used by the graphics library
@@ -48,8 +48,8 @@ Graphics_Image bitmap; //bitmap image variable used by the graphics library
 const eUSCI_UART_ConfigV1 uartConfig =
 {
     EUSCI_A_UART_CLOCKSOURCE_SMCLK,          // SMCLK Clock Source
-    1,                                     // BRDIV = 1
-    10,                                       // UCxBRF = 10
+    1,                                       // BRDIV = 1
+    10,                                      // UCxBRF = 10
     0,                                       // UCxBRS = 0
     EUSCI_A_UART_NO_PARITY,                  // No Parity
     EUSCI_A_UART_LSB_FIRST,                  // LSB First
@@ -138,9 +138,6 @@ void init_LCD(void)
     Crystalfontz128x128_SetOrientation(LCD_ORIENTATION_UP);
 
     Graphics_initContext(&g_sContext, &g_sCrystalfontz128x128, &g_sCrystalfontz128x128_funcs);
-    Graphics_setForegroundColor(&g_sContext, GRAPHICS_COLOR_BLACK);
-    Graphics_setBackgroundColor(&g_sContext, GRAPHICS_COLOR_WHITE);
-    GrContextFontSet(&g_sContext, &g_sFontFixed6x8);
 }
 
 // initialize the state machines initial state
@@ -224,8 +221,6 @@ void DMA_INT1_IRQHandler(void)
         MAP_DMA_setChannelTransfer(UDMA_ALT_SELECT | DMA_CH1_EUSCIA0RX, UDMA_MODE_PINGPONG, (void*)MAP_UART_getReceiveBufferAddressForDMA(EUSCI_A0_BASE), RXData_pong, TOTAL_LCD_BYTES);
         process_ReceivedData(false);
     }
-
-    printf("data comming  %d\n", count);
  }
 
 // Process the ADC data and execute the state machines' tick function
@@ -267,7 +262,7 @@ void process_ReceivedData(bool ping_or_pong)
             i += 4;
         }
         palletindex = 0;
-        imageindex = 0;
+        imageindex = 5120;
         count = 0;
         Graphics_drawImage(&g_sContext, &bitmap, 0, 0);
     }

@@ -21,9 +21,9 @@ from mss.darwin import MSS as mss
 # send screenshot image to launchpad
 def serialSendThread():
     global ser, breakSerial, cursorImage, sendimageflag
-    x0 = 645  # top left x co-ordinate of the screen to be captured
-    y0 = 450  # top left y co-ordinate of the screen to be captured
-    w = 530   # width of the captured screen
+    x0 = 650  # top left x co-ordinate of the screen to be captured
+    y0 = 510  # top left y co-ordinate of the screen to be captured
+    w = 418  # width of the captured screen
     h = 50    # height of the captured screen
     datachunksize = 1024  # number of bytes sent to the launchpad at a time
     newPallet = [0]*datachunksize
@@ -38,13 +38,13 @@ def serialSendThread():
                 "height": h,
                 "mon": monitor_number,
             }
-            templateImage = Image.new("RGB",(265,100)) # a template image on top of it the processed image will be pasted
+            templateImage = Image.new("RGB",(w//2,100)) # a template image on top of it the processed image will be pasted
             while not breakSerial:
                 if sendimageflag:
                     sct_img = sct.grab(monitor) # capture a screenshot
                     imgpill = Image.frombytes("RGB", sct_img.size, sct_img.bgra, "raw", "BGRX") # convert the captured image into PIL format
-                    leftHalfimg = imgpill.crop((0,0,265,50)) # take the left half of the image
-                    rightHalfimg = imgpill.crop((265, 0, 530, 50)) # take the right half of the image
+                    leftHalfimg = imgpill.crop((0,0,w//2,50)) # take the left half of the image
+                    rightHalfimg = imgpill.crop((w//2, 0, w, 50)) # take the right half of the image
                     templateImage.paste(leftHalfimg,(0,0)) # paste the left half to the top of the template image
                     templateImage.paste(rightHalfimg, (0, 50)) # paste the right half to the bottom of the template image
                     resizedimg = templateImage.resize((128, 48), Image.ANTIALIAS) # resize the template image to lower resolution
