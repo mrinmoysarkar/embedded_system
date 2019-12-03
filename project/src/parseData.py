@@ -20,7 +20,7 @@ from mss.darwin import MSS as mss
 
 # send screenshot image to launchpad
 def serialSendThread():
-    global ser, breakSerial, cursorImage, sendimageflag
+    global ser, breakSerial, sendimageflag
     x0 = 650  # top left x co-ordinate of the screen to be captured
     y0 = 510  # top left y co-ordinate of the screen to be captured
     w = 418  # width of the captured screen
